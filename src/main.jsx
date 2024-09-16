@@ -8,6 +8,7 @@ import App from "./App.jsx";
 import Logs from "./pages/Logs";
 import Update from "./pages/Update";
 import NavBar from "./components/NavBar.jsx";
+import Footer from "./components/Footer.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="/logs" element={<Logs />} />
           <Route path="/update" element={<Update />} />
         </Routes>
+        <Footer />
       </Router>
     </NextUIProvider>
   </StrictMode>
