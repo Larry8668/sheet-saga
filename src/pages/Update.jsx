@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { FaSearch, FaInfoCircle } from "react-icons/fa";
 import { supabase } from "../utils/supabaseClient";
+import { toast } from "sonner"; // Import Sonner for notifications
 
 const Update = () => {
   const [spreadsheetId, setSpreadsheetId] = useState("");
   const [sheetName, setSheetName] = useState("");
+  const [sheetId, setSheetId] = useState(null);
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [action, setAction] = useState("view");
   const [rowNo, setRowNo] = useState("");
   const [rowData, setRowData] = useState({});
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
 
   const fetchRows = async () => {
     const { data: spreadsheetData, error: spreadsheetError } = await supabase
@@ -26,7 +29,7 @@ const Update = () => {
 
     const { data: sheetData, error: sheetError } = await supabase
       .from("sheet")
-      .select("id, title_array")
+      .select("id, sheet_id, title_array")
       .eq("spreadsheet_id", spreadsheetData.id)
       .eq("sheet_name", sheetName)
       .single();
@@ -37,6 +40,8 @@ const Update = () => {
     }
 
     setColumns(sheetData.title_array);
+    console.log(sheetData.sheet_id);
+    setSheetId(sheetData.sheet_id);
 
     const { data: rowsData, error: rowsError } = await supabase
       .from("row")
@@ -53,17 +58,69 @@ const Update = () => {
   };
 
   const handleSubmit = async () => {
-    if (action === "insert") {
-      console.log("Insert action triggered with data:", rowData);
-    } else if (action === "update") {
-      console.log(
-        "Update action triggered for row no:",
-        rowNo,
-        "with data:",
-        rowData
-      );
-    } else if (action === "delete") {
-      console.log("Delete action triggered for row no:", rowNo);
+    setLoading(true); // Start loading
+    const values = columns.map((col) => rowData[col] || ""); // Treat empty fields as empty strings
+
+    console.log("Action:", action);
+    console.log("Values:", values);
+
+    try {
+      if (action === "insert") {
+        const response = await fetch("http://localhost:3000/api/row-append", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            spreadsheetId,
+            sheetName,
+            values: values.map(String),
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success("Row appended successfully!");
+          setRows((prev) => [
+            ...prev,
+            { row_no: prev.length + 1, data: rowData },
+          ]); // Update local state
+        } else {
+          toast.error(data.message || "Failed to append row.");
+        }
+      } else if (action === "update") {
+        const response = await fetch("http://localhost:3000/api/row-update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            spreadsheetId,
+            sheetName,
+            row: parseInt(rowNo, 10),
+            values: values.map(String),
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success("Row updated successfully!");
+          // Update local state logic here
+        } else {
+          toast.error(data.message || "Failed to update row.");
+        }
+      } else if (action === "delete") {
+        const response = await fetch("http://localhost:3000/api/row-delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ spreadsheetId, sheetId, row: rowNo }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success("Row deleted successfully!");
+          // Update local state logic here
+        } else {
+          toast.error(data.message || "Failed to delete row.");
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred: " + error.message);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -71,6 +128,7 @@ const Update = () => {
     <div className="w-screen min-h-screen bg-gray-100 p-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Update Rows</h1>
 
+      {/* Search Bar */}
       <div className="max-w-3xl mx-auto mb-8 flex items-center">
         <input
           type="text"
@@ -103,6 +161,7 @@ const Update = () => {
             className={`p-3 rounded-lg ${
               action === tab ? "bg-blue-500 text-white" : "bg-gray-200"
             }`}
+            disabled={loading} // Disable buttons when loading
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -116,8 +175,9 @@ const Update = () => {
             type="number"
             placeholder="Enter Row Number"
             value={rowNo}
-            onChange={(e) => setRowNo(e.target.value)}
+            onChange={(e) => setRowNo(parseInt(e.target.value, 10) || "")} // Parse as integer
             className="w-full p-3 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
+            disabled={loading} // Disable input when loading
           />
         </div>
       )}
@@ -135,6 +195,7 @@ const Update = () => {
                 setRowData({ ...rowData, [column]: e.target.value })
               }
               className="w-full p-3 mb-4 border-2 border-gray-300 focus:outline-none focus:border-blue-500"
+              disabled={loading} // Disable input when loading
             />
           ))}
         </div>
@@ -146,8 +207,11 @@ const Update = () => {
           <button
             onClick={handleSubmit}
             className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition duration-300"
+            disabled={loading} // Disable button when loading
           >
-            {action.charAt(0).toUpperCase() + action.slice(1)}
+            {loading
+              ? "Processing..."
+              : action.charAt(0).toUpperCase() + action.slice(1)}
           </button>
         </div>
       )}
