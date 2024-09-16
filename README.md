@@ -1,8 +1,15 @@
-# React + Vite
+<div align="center">
+  <img width="800" alt="Something was supposed to be here 🤔" src="https://github.com/user-attachments/assets/8645059b-330f-4e72-a378-0371e2a8b4e0">
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
+# Sheet Saga - Sync smarter, not harder
 
-Currently, two official plugins are available:
+## How to run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Boot up the [website](https://sheet-saga.vercel.app/)
+- Follow the steps mentioned in the landing page.
+- The .gs files you are looking for can be found [here](https://github.com/Larry8668/sheet-saga-backend/tree/main/google-apps-script) 
+- Service account is `shreadsheet-writer@superjoin-assignment-435615.iam.gserviceaccount.com`
+
+---
