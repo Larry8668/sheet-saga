@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import NavDropDown from "./NavDropDown";
 import logo from "../assets/sheet-saga-logo.png";
+import { FaGithub } from "react-icons/fa";
 
 const routes = [
   {
@@ -43,6 +44,13 @@ const NavBar = () => {
               {route.name}
             </a>
           ))}
+          <a
+            href="https://github.com/Larry8668/sheet-saga"
+            target="_blank"
+            className="flex items-center justify-center p-2 gap-2 text-sm rounded border-2 border-slate-500 text-slate-500 bg-white hover:bg-slate-500 hover:text-white transition duration-300 ease-in-out cursor-pointer"
+          >
+            Give it a star <FaGithub className="text-lg" />
+          </a>
         </div>
         <NavDropDown routes={routes} />
       </div>

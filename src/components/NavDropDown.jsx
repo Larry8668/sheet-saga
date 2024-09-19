@@ -7,6 +7,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { FaGithub } from "react-icons/fa";
 
 const NavDropDown = ({ routes }) => {
   return (
@@ -31,6 +32,15 @@ const NavDropDown = ({ routes }) => {
               </a>
             </DropdownItem>
           ))}
+          <DropdownItem>
+            <a
+              href="https://github.com/Larry8668/sheet-saga"
+              target="_blank"
+              className="flex items-center justify-center p-1 gap-2 text-base border-slate-500 text-slate-500 bg-white hover:bg-slate-500 hover:text-white transition duration-300 ease-in-out cursor-pointer"
+            >
+              Give it a star <FaGithub className="text-lg" />
+            </a>
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </div>

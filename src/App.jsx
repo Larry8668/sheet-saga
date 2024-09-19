@@ -7,6 +7,7 @@ import { SiPostgresql } from "react-icons/si";
 import { FaNodeJs } from "react-icons/fa";
 import { SiGooglesheets } from "react-icons/si";
 import { FaReact } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 import step1 from "./assets/steps/step-1.png";
 import step2 from "./assets/steps/step-2.png";
@@ -29,6 +30,7 @@ const steps = [
     description:
       "Head over to Extension > Apps Script in the toolbar in your sheet and insert the .gs files provided in the repository.",
     image: step1,
+    link: "https://github.com/Larry8668/sheet-saga-backend/tree/main/google-apps-script",
   },
   {
     number: "02",
@@ -36,6 +38,7 @@ const steps = [
     description:
       "Invite the service account email mentioned in the README to your Google Sheet and give it the editor permissions.",
     image: step2,
+    link: "https://github.com/Larry8668/sheet-saga?tab=readme-ov-file#how-to-run",
   },
   {
     number: "03",
@@ -143,7 +146,18 @@ const App = () => {
                 <h3 className="text-xl md:text-3xl font-bold mb-4">
                   {step.title}
                 </h3>
-                <p className="text-lg text-gray-600">{step.description}</p>
+                <p className="text-lg text-gray-600 flex justify-center items-end">
+                  {step.description}
+                  {step.link && (
+                    <a
+                      href={step.link}
+                      target="_blank"
+                      className="text-slate-500 mx-2"
+                    >
+                      <FaExternalLinkAlt />
+                    </a>
+                  )}
+                </p>
               </div>
             </div>
           </motion.div>
